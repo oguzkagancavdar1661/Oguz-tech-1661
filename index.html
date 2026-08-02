@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OĞUZ TECH | Geleceği Cebine Taşı</title>
+    
+    <meta name="description" content="OĞUZ TECH - Fütüristik sokak stili, siber koleksiyonlar, premium t-shirt and oversize hoodie tasarımları. Sınırlı sayıda üretilen özel dijital tasarım siber kıyafetleri keşfet." />
+    <meta name="keywords" content="oguz tech, siber giyim, fütüristik kıyafet, oversize hoodie, siber sokak tarzı, premium t-shirt, cyberpunk giyim, neon tasarım" />
+    <meta name="author" content="OĞUZ TECH" />
+    <meta name="robots" content="index, follow" />
+    
+    <meta property="og:title" content="OĞUZ TECH | Geleceği Cebine Taşı" />
+    <meta property="og:description" content="Sınırlı sayıda üretilen premium siber giyim ürünlerini keşfet." />
+    <meta property="og:image" content="https://oguzkagancavdar1661.github.io/Oguz-Tech/logo.jpg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://oguzkagancavdar1661.github.io/Oguz-Tech/" />
+    <meta property="og:locale" content="tr_TR" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --bg-primary: #0B111E;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --accent: #00F0FF;
+            --accent-dim: rgba(0, 240, 255, 0.15);
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --border-color: rgba(0, 240, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        [id] {
+            scroll-margin-top: 90px;
+        }
+
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.02) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.005), rgba(0, 255, 0, 0.002), rgba(0, 0, 255, 0.005));
+            z-index: 99999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .cyber-grid {
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center top;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0));
+        }
+
+        #matrixCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.03;
+        }
+
+        /* Resimlerin Kapsayıcı Ayarları ve Masaüstü Hover Efekti */
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .front-image, .back-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-cover: cover;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .front-image {
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .back-image {
+            z-index: 1;
+            opacity: 0;
+        }
+
+        /* Sadece masaüstünde üzerine gelince arka görseli göster */
+        @media (min-width: 768px) {
+            .product-card:hover .front-image {
+                opacity: 0;
+            }
+            .product-card:hover .back-image {
+                opacity: 1;
+                z-index: 2;
+            }
+        }
+
+        /* Mobilde sadece ön yüzü göster ve taşmaları engelle */
+        @media (max-width: 767px) {
+            .back-image {
+                display: none !important;
+            }
+            .front-image {
+                position: relative !important;
+                opacity: 1 !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            margin-top: 1rem;
+            opacity: 1;
+        }
+        .faq-item .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+        }
+        .faq-item.active .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+        .faq-item .fa-chevron-down {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body id="home">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div id="actionNotification" class="fixed top-24 right-6 z-50 bg-[#111827]/90 border border-[#00F0FF]/50 px-5 py-3 rounded-xl backdrop-blur-md flex items-center space-x-3 transform translate-x-20 opacity-0 transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.2)] pointer-events-none text-xs font-cyber text-[#00F0FF]">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span id="actionNotificationText">İŞLEM BAŞARILI</span>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 bg-opacity-70 backdrop-blur-md border-b border-[rgba(0,240,255,0.1)] bg-[#0B111E] py-4 px-6 md:px-12 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="font-cyber text-2xl font-black tracking-wider text-white">OĞUZ<span class="text-[#00F0FF]">TECH</span></span>
+        </div>
+        
+        <div class="hidden md:flex space-x-8 font-cyber text-sm tracking-widest text-slate-300">
+            <a href="#home" class="hover:text-[#00F0FF] transition">ANA SAYFA</a>
+            <a href="#products" class="hover:text-[#00F0FF] transition">MAĞAZA</a>
+            <a href="#faq" class="hover:text-[#00F0FF] transition">S.S.S</a>
+            <a href="#about" class="hover:text-[#00F0FF] transition">HAKKIMIZDA</a>
+            <a href="#legal" class="hover:text-[#00F0FF] transition">YASAL ŞARTLAR</a>
+        </div>
+        
+        <div class="hidden md:flex items-center space-x-6">
+            <button onclick="scrollToProducts()" class="font-cyber border border-[#00F0FF] text-[#00F0FF] px-4 py-1.5 text-xs tracking-widest rounded bg-[#00F0FF]/5 hover:bg-[#00F0FF]/20 transition">MAĞAZAYI GEZ</button>
+            <button onclick="toggleCartSidebar()" class="relative text-white hover:text-[#00F0FF] transition text-lg p-1">
+                <i class="fa-solid fa-shopping-basket"></i>
+                <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-[#00F0FF] text-[#0B111E] text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center font-cyber">0</span>
+            </button>
+        </div>
+
+        <div class="flex items-center space-x-4 md:hidden">
+            <button onclick="toggleCartSidebar()" class="relative text-white hover:text-[#00F0FF] transition text-lg p-1 mr-2">
+                <i class="fa-solid fa-shopping-basket"></i>
+                <span id="mobileCartCountBadge" class="absolute -top-2 -right-2 bg-[#00F0FF] text-[#0B111E] text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center font-cyber">0</span>
+            </button>
+            <button onclick="toggleMobileMenu()" class="text-white hover:text-[#00F0FF] transition z-50">
+                <i id="menuIcon" class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobileMenu" class="fixed inset-0 bg-[#0B111E] z-40 flex flex-col items-center justify-center space-y-8 font-cyber text-xl tracking-widest hidden opacity-0 transition-all duration-300">
+        <a href="#home" onclick="toggleMobileMenu()" class="hover:text-[#00F0FF] transition">ANA SAYFA</a>
+        <a href="#products" onclick="toggleMobileMenu()" class="hover:text-[#00F0FF] transition">MAĞAZA</a>
+        <a href="#faq" onclick="toggleMobileMenu()" class="hover:text-[#00F0FF] transition">S.S.S</a>
+        <a href="#about" onclick="toggleMobileMenu()" class="hover:text-[#00F0FF] transition">HAKKIMIZDA</a>
+        <a href="#legal" onclick="toggleMobileMenu()" class="hover:text-[#00F0FF] transition">YASAL ŞARTLAR</a>
+        <button onclick="toggleMobileMenu(); scrollToProducts()" class="border border-[#00F0FF] text-[#00F0FF] px-6 py-2 text-sm tracking-widest rounded bg-[#00F0FF]/5">MAĞAZAYI GEZ</button>
+    </div>
+
+    <main class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 cyber-grid opacity-30 z-0"></div>
+        
+        <div class="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-6 text-center md:text-left">
+                <div class="inline-block px-3 py-1 bg-[#00F0FF]/10 border border-[#00F0FF]/30 rounded text-[#00F0FF] text-xs font-cyber tracking-widest uppercase">
+                    YENİ SİBER KOLEKSİYON YAYINDA
+                </div>
+                <h1 class="font-cyber text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none">
+                    GELECEĞİ<br /><span class="text-[#00F0FF] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">CEBİNE TAŞI</span>
+                </h1>
+                <p class="text-slate-400 text-base max-w-md mx-auto md:mx-0">
+                    OĞUZ TECH, teknoloji tutkusunu fütüristik sokak stiliyle birleştiriyor. Sınırlı sayıda üretilen premium tasarımlarla tarzını geleceğe uyarla.
+                </p>
+                <div class="pt-4">
+                    <button onclick="scrollToProducts()" class="font-cyber bg-[#00F0FF] text-[#0B111E] font-bold px-8 py-4 rounded tracking-widest uppercase text-sm hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                        KOLEKSİYONU KEŞFET
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center">
+                <div class="relative w-full max-w-sm aspect-square rounded-2xl border-2 border-[#00F0FF]/20 p-2 bg-[#111827]/40 backdrop-blur-md flex justify-center items-center overflow-hidden group hover:border-[#00F0FF]/50 transition-all duration-500">
+                    <div class="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-[#00F0FF]"></div>
+                    <div class="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-[#00F0FF]"></div>
+                    <img src="logo.jpg" width="400" height="400" alt="OĞUZ TECH Logo" class="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]" />
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="products" class="py-24 bg-[#111827]/30 border-t border-[rgba(0,240,255,0.05)]">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="text-center max-w-xl mx-auto mb-12">
+                <h2 class="font-cyber text-3xl font-bold tracking-wider uppercase mb-4">MAĞAZA / DROP 01</h2>
+                <div class="h-1 w-20 bg-[#00F0FF] mx-auto mb-4"></div>
+                <p class="text-slate-400 text-sm">Sınırlı sayıda üretilen ilk siber koleksiyonumuz. Hemen tarzını seç ve sipariş ver!</p>
+            </div>
+
+            <div class="max-w-md mx-auto mb-12 relative px-4">
+                <div class="absolute inset-y-0 left-7 flex items-center pointer-events-none text-[#00F0FF]/60">
+                    <i class="fa-solid fa-terminal text-xs mr-2"></i>
+                </div>
+                <input type="text" id="cyberSearchInput" oninput="filterProducts()" placeholder="SİSTEMDE ARA (T-SHIRT, HOODIE...)" class="w-full bg-[#0B111E]/80 border border-[#00F0FF]/30 rounded-xl py-3 pl-10 pr-4 text-sm font-cyber tracking-widest text-white focus:outline-none focus:border-[#00F0FF] focus:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all placeholder-slate-600" />
+            </div>
+
+            <div id="searchNoResult" class="text-center py-12 hidden">
+                <p class="font-cyber text-sm tracking-widest text-red-400">⚠ [HATA_404]: ARANAN ÖZELLİKTE ÜRÜN BULUNAMADI.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 justify-center max-w-4xl mx-auto" id="productsGrid">
+                
+                <div class="product-card bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden backdrop-blur-sm group hover:border-[#00F0FF]/40 transition-all duration-300 flex flex-col h-full w-full relative">
+                    <div onclick="openQuickView('tshirt')" class="relative aspect-square bg-[#0b111e] overflow-hidden p-4 flex items-center justify-center cursor-pointer z-10">
+                        <div class="absolute top-3 left-3 bg-[#00F0FF]/10 border border-[#00F0FF]/30 px-2 py-0.5 rounded text-[10px] font-cyber text-[#00F0FF] tracking-wider z-30">PREMIUM DROP <span class="opacity-80 ml-1 text-[9px] font-sans border-l border-[#00F0FF]/40 pl-1">+ ARKA BASKILI</span></div>
+                        <div class="w-full h-full rounded-lg bg-[#111827]/60 product-image-container">
+                            <img src="tisort.jpg" alt="OĞUZ TECH T-Shirt" class="front-image" />
+                            <img src="tisort-arka.jpg" alt="OĞUZ TECH T-Shirt Arka" class="back-image" />
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow relative z-20 bg-slate-900/40 border-t border-slate-800/50">
+                        <h3 class="product-title font-cyber text-lg font-semibold tracking-wide text-white mb-2">OĞUZ TECH Klasik T-Shirt</h3>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-4 flex-grow">%100 Premium Pamuk kumaş yapısı ve neon mavi OĞUZ TECH logosuyla siber sokak tarzını yakala.</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-slate-800/60 mt-auto relative z-30">
+                            <span class="font-cyber text-xl font-bold text-[#00F0FF]">499.00 TL</span>
+                            <button onclick="openQuickView('tshirt')" class="bg-[#00F0FF]/10 hover:bg-[#00F0FF] border border-[#00F0FF]/40 hover:text-[#0B111E] text-[#00F0FF] px-4 py-2 text-xs font-cyber tracking-wider rounded font-medium transition-all duration-300 relative z-40">İNCELE / SATIN AL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden backdrop-blur-sm group hover:border-[#00F0FF]/40 transition-all duration-300 flex flex-col h-full w-full relative">
+                    <div onclick="openQuickView('hoodie')" class="relative aspect-square bg-[#0B111E] overflow-hidden p-4 flex items-center justify-center cursor-pointer z-10">
+                        <div class="absolute top-3 left-3 bg-[#00F0FF]/10 border border-[#00F0FF]/30 px-2 py-0.5 rounded text-[10px] font-cyber text-[#00F0FF] tracking-wider z-30">LIMITED DROP <span class="opacity-80 ml-1 text-[9px] font-sans border-l border-[#00F0FF]/40 pl-1">+ ARKA BASKILI</span></div>
+                        <div class="w-full h-full rounded-lg bg-[#111827]/60 product-image-container">
+                            <img src="kapusonlu.png" alt="NEON MATRIX Oversize Hoodie" class="front-image" />
+                            <img src="kapusonlu-arka.png" alt="NEON MATRIX Oversize Hoodie Arka" class="back-image" />
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow relative z-20 bg-slate-900/40 border-t border-slate-800/50">
+                        <h3 class="product-title font-cyber text-lg font-semibold tracking-wide text-white mb-2">NEON MATRIX Oversize Hoodie</h3>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-4 flex-grow">Sırtında göz alıcı neon mavi dijital kod yağmuru ve siber parazitli kurukafa detayı barındıran imza parça.</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-slate-800/60 mt-auto relative z-30">
+                            <span class="font-cyber text-xl font-bold text-[#00F0FF]">999.00 TL</span>
+                            <button onclick="openQuickView('hoodie')" class="bg-[#00F0FF]/10 hover:bg-[#00F0FF] border border-[#00F0FF]/40 hover:text-[#0B111E] text-[#00F0FF] px-4 py-2 text-xs font-cyber tracking-wider rounded font-medium transition-all duration-300 relative z-40">İNCELE / SATIN AL</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 bg-[#0B111E] border-t border-[rgba(0,240,255,0.05)]">
+        <div class="container mx-auto px-6 md:px-12 max-w-3xl">
+            <div class="text-center mb-16">
+                <h2 class="font-cyber text-3xl font-bold tracking-wider uppercase mb-4">SIKÇA SORULAN SORULAR</h2>
+                <div class="h-1 w-20 bg-[#00F0FF] mx-auto"></div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="faq-item bg-slate-900/30 border border-slate-800 rounded-xl p-5 backdrop-blur-sm transition-all duration-300">
+                    <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center text-left focus:outline-none">
+                        <span class="font-cyber text-sm tracking-wide text-white">SİPARİŞİMİ NASIL OLUŞTURURUM?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-[#00F0FF]"></i>
+                    </button>
+                    <div class="faq-answer text-xs text-slate-400 leading-relaxed">
+                        Ürünü inceleyip bedeninizi seçtikten sonra sepetinize ekleyin. Sepet panelindeki 'WhatsApp ile Siparişi Tamamla' butonuna tıkladığınızda sipariş verileriniz otomatik kodlanarak doğrudan resmi sipariş hattımıza aktarılır.
+                    </div>
+                </div>
+
+                <div class="faq-item bg-slate-900/30 border border-slate-800 rounded-xl p-5 backdrop-blur-sm transition-all duration-300">
+                    <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center text-left focus:outline-none">
+                        <span class="font-cyber text-sm tracking-wide text-white">ÖDEMEYİ NASIL GERÇEKLEŞTİRİRİM?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-[#00F0FF]"></i>
+                    </button>
+                    <div class="faq-answer text-xs text-slate-400 leading-relaxed">
+                        WhatsApp hattımız üzerinden otomatik sipariş fişiniz onaylandıktan sonra, adınıza düzenlenen fatura detaylarıyla birlikte Güvenli Havale/EFT bilgilerimiz sizinle paylaşılmaktadır.
+                    </div>
+                </div>
+
+                <div class="faq-item bg-slate-900/30 border border-slate-800 rounded-xl p-5 backdrop-blur-sm transition-all duration-300">
+                    <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center text-left focus:outline-none">
+                        <span class="font-cyber text-sm tracking-wide text-white">KUMAŞ VE BASKI KALİTESİ NEDİR?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-[#00F0FF]"></i>
+                    </button>
+                    <div class="faq-answer text-xs text-slate-400 leading-relaxed">
+                        Ürünü inceleyip bedeninizi seçtikten sonra sepetinize ekleyin. Sepet panelindeki 'WhatsApp ile Siparişi Tamamla' butonuna tıkladığınızda sipariş verileriniz otomatik kodlanarak doğrudan resmi sipariş hattımıza aktarılır.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 bg-[#111827]/20 border-t border-[rgba(0,240,255,0.05)] relative">
+        <div class="container mx-auto px-6 md:px-12 text-center max-w-2xl">
+            <h2 class="font-cyber text-3xl font-bold tracking-wider uppercase mb-4">HAKKIMIZDA</h2>
+            <div class="h-1 w-20 bg-[#00F0FF] mx-auto mb-6"></div>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                OĞUZ TECH, teknoloji tutkusunu ve siber kültürün fütüristik estetiğini sokak stiliyle harmanlayan yenilikçi bir bağımsız giyim markasıdır.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                Amacımız, geleceğin dijital çizgilerini ve neon enerjisini premium tekstil kalitesiyle bugün üzerinizde taşımaktır. Sınırlı sayıda üretilen her bir drop, tarzınızı tamamen geleceğe uyarlamak için kodlandı.
+            </p>
+        </div>
+    </section>
+
+    <div id="quickViewModal" onclick="closeModalOnOutside(event)" class="fixed inset-0 z-50 hidden overflow-y-auto bg-[#0B111E]/90 backdrop-blur-md p-4 flex items-center justify-center">
+        <div class="bg-[#111827] border border-[#00F0FF]/30 w-full max-w-2xl rounded-2xl p-6 md:p-8 relative mt-10 md:mt-0">
+            <button onclick="closeModal()" class="absolute top-2 right-4 text-slate-400 hover:text-white font-bold text-4xl transition z-50 p-3 leading-none select-none">&times;</button>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 md:pt-0">
+                <div class="flex flex-col space-y-3">
+                    <div class="bg-[#0b111e] border border-slate-800 aspect-square rounded-xl overflow-hidden flex items-center justify-center relative">
+                        <img id="modalImg" src="" alt="Ürün Detay" class="w-full h-full object-cover transition-all duration-300" />
+                    </div>
+                    <div class="flex justify-center space-x-4">
+                        <button id="btnViewFront" onclick="changeModalView('front')" class="px-3 py-1 border border-[#00F0FF] text-xs font-cyber text-[#00F0FF] bg-[#00F0FF]/10 rounded tracking-wider transition">ÖN YÜZ</button>
+                        <button id="btnViewBack" onclick="changeModalView('back')" class="px-3 py-1 border border-slate-700 text-xs font-cyber text-slate-400 rounded tracking-wider transition">ARKA YÜZ</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <h2 id="modalTitle" class="font-cyber text-2xl font-bold text-white mb-2">Ürün Adı</h2>
+                        <div id="modalPrice" class="font-cyber text-2xl font-black text-[#00F0FF] mb-4">0.00 TL</div>
+                        <p id="modalDesc" class="text-slate-300 text-sm mb-6 leading-relaxed">Ürün açıklaması.</p>
+                        
+                        <div class="mb-6">
+                            <span class="block text-xs font-cyber tracking-wider text-slate-400 uppercase mb-2">BEDEN SEÇİNİZ <span class="text-red-500">*</span>:</span>
+                            <div class="flex space-x-2" id="sizeContainer">
+                                <button onclick="selectSize(this)" class="w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition">S</button>
+                                <button onclick="selectSize(this)" class="w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition">M</button>
+                                <button onclick="selectSize(this)" class="w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition">L</button>
+                                <button onclick="selectSize(this)" class="w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition">XL</button>
+                            </div>
+                            <div id="sizeWarning" class="hidden mt-3 p-2 bg-red-950/40 border border-red-500/50 rounded text-red-400 text-xs font-cyber tracking-wider">
+                                ⚠ [SİSTEM_HATASI]: DEVAM ETMEK İÇİN BEDEN SEÇİMİ ZORUNLUDUR.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="addItemToCart()" class="w-full text-center font-cyber bg-[#00F0FF] text-[#0B111E] font-bold py-4 rounded tracking-widest uppercase text-sm block hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition duration-300">
+                        <i class="fa-solid fa-cart-plus mr-1 text-base"></i> SEPETE EKLE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartSidebar" class="fixed top-0 right-0 h-full w-full sm:w-[380px] bg-[#111827] border-l border-[#00F0FF]/20 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+        <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+            <h3 class="font-cyber text-lg font-bold text-white tracking-wider"><i class="fa-solid fa-shopping-basket text-[#00F0FF] mr-2"></i>SEPETİM</h3>
+            <button onclick="toggleCartSidebar()" class="text-slate-400 hover:text-white text-2xl font-cyber">&times;</button>
+        </div>
+        
+        <div id="cartItemsList" class="p-6 flex-grow overflow-y-auto space-y-4">
+            <p class="text-slate-500 text-sm font-cyber text-center py-8">Sepetiniz henüz boş.</p>
+        </div>
+        
+        <div class="p-6 border-t border-slate-800 bg-[#0B111E]/50">
+            <div class="flex justify-between items-center mb-6">
+                <span class="font-cyber text-sm tracking-widest text-slate-400">TOPLAM TUTAR:</span>
+                <span id="cartTotalText" class="font-cyber text-xl font-black text-[#00F0FF]">0.00 TL</span>
+            </div>
+            <button id="whatsappCheckoutBtn" onclick="checkoutToWhatsApp()" class="w-full text-center font-cyber bg-[#25D366] text-white font-bold py-4 rounded tracking-widest uppercase text-sm flex items-center justify-center gap-2 hover:bg-[#20ba59] transition duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-brands fa-whatsapp text-lg"></i> WHATSAPP İLE SİPARİŞİ TAMAMLA
+            </button>
+        </div>
+    </div>
+
+    <section id="legal" class="py-24 bg-[#111827]/30 border-t border-[rgba(0,240,255,0.05)]">
+        <div class="container mx-auto px-6 md:px-12 max-w-3xl">
+            <div class="flex justify-center space-x-2 sm:space-x-4 border-b border-slate-800 mb-8" id="legalTabs">
+                <button onclick="switchTab('delivery')" id="tab-delivery" class="px-4 py-2 text-xs sm:text-sm font-cyber tracking-wider border-b-2 border-[#00F0FF] text-[#00F0FF] transition-all">TESLİMAT & KARGO</button>
+                <button onclick="switchTab('return')" id="tab-return" class="px-4 py-2 text-xs sm:text-sm font-cyber tracking-wider border-b-2 border-transparent text-slate-400 transition-all">İADE KOŞULLARI</button>
+                <button onclick="switchTab('privacy')" id="tab-privacy" class="px-4 py-2 text-xs sm:text-sm font-cyber tracking-wider border-b-2 border-transparent text-slate-400 transition-all">KVKK & GİZLİLİK</button>
+            </div>
+            
+            <div id="content-delivery" class="legal-content text-slate-400 text-sm leading-relaxed space-y-2 text-center md:text-left">
+                <h4 class="text-white font-cyber font-bold mb-2">OĞUZ TECH Giyim Sanayi - Teslimat ve Kargo Süreçleri</h4>
+                <p>Siparişleriniz, markamızın yüksek siber güvenlikli paketleme standartlarında el değmeden hazırlanarak 1-3 iş günü içerisinde anlaşmalı kargo firmamıza teslim edilir. Türkiye'nin her yerine premium gönderim seçeneği aktiftir. Kargo takip kodunuz entegrasyon üzerinden otomatik olarak WhatsApp hattınıza gönderilecektir.</p>
+            </div>
+            <div id="content-return" class="legal-content text-slate-400 text-sm leading-relaxed space-y-2 text-center md:text-left hidden">
+                <h4 class="text-white font-cyber font-bold mb-2">İade ve Değişim Politikası</h4>
+                <p>Tüketici Kanunu standartları uyarınca, satın aldığınız ürünlerin orijinal siber ambalajı bozulmamış, sallantılı karton etiketleri sökülmemiş ve giyilmemiş/yıkanmamış olması şartıyla, teslim aldığınız tarihten itibaren 14 gün boyunca koşulsuz iade ve beden değişimi hakkınız bulunmaktadır. Süreci başlatmak için WhatsApp destek ekibimizle doğrudan iletişime geçebilirsiniz.</p>
+            </div>
+            <div id="content-privacy" class="legal-content text-slate-400 text-sm leading-relaxed space-y-2 text-center md:text-left hidden">
+                <h4 class="text-white font-cyber font-bold mb-2">KVKK Veri Güvenliği Aydınlatma Metni</h4>
+                <p>OĞUZ TECH dijital platformunda sipariş oluştururken beyan ettiğiniz ad, soyad, telephone ve teslimat adres verileri; 6698 sayılı KVKK kapsamında yalnızca lojistik süreçlerin tamamlanması ve müşteri memnuniyet analizleri amacıyla şifreli veritabanlarında saklanır. Bilgileriniz asla üçüncü şahıslarla veya bağımsız dijital reklam havuzlarıyla paylaşılmaz. (OĞUZ TECH Giyim ve Siber Tasarım Girişimi)</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#0B111E] border-t border-slate-800 py-12 px-6 text-center">
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+            <a href="https://instagram.com/oguzkagancavdar1661" target="_blank" rel="noopener noreferrer" class="text-[#00F0FF] hover:text-white transition flex items-center space-x-2 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-lg text-sm font-cyber tracking-widest">
+                <i class="fa-brands fa-instagram text-xl"></i>
+                <span>@oguzkagancavdar1661</span>
+            </a>
+            <a href="mailto:kagan188125@gmail.com" target="_blank" class="text-[#00F0FF] hover:text-white transition flex items-center space-x-2 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-lg text-sm font-cyber tracking-widest">
+                <i class="fa-solid fa-envelope text-lg"></i>
+                <span>kagan188125@gmail.com</span>
+            </a>
+        </div>
+        <div class="text-xs text-slate-500 font-cyber tracking-widest leading-loose">
+            &copy; 2026 OĞUZ TECH. GELECEĞİ CEBİNE TAŞI. <br class="sm:hidden" /> TÜM HAKLARI SAKLIDIR.
+        </div>
+    </footer>
+
+    <script>
+        const KENDI_TELEFONUM = "905514785239"; 
+        const SITE_URL = "https://oguzkagancavdar1661.github.io/Oguz-Tech"; 
+
+        const urunler = {
+            tshirt: {
+                id: 'tshirt',
+                title: "OĞUZ TECH Klasik T-Shirt",
+                price: 499.00,
+                desc: "%100 Birinci sınıf pamuklu rahat kesim kumaş. Ön yüzünde minimal siber logo, sırtında büyük 'Geleceği Cebine Taşı' slogan baskısı mevcuttur.",
+                imgFront: "tisort.jpg",
+                imgBack: "tisort-arka.jpg"
+            },
+            hoodie: {
+                id: 'hoodie',
+                title: "NEON MATRIX Oversize Hoodie",
+                price: 999.00,
+                desc: "Sırtında göz alıcı neon mavi dijital kod yağmuru ve siber parazitli kurukafa detayı barındıran imza parça. %100 kalın premium üç iplik kumaştan üretilmiştir.",
+                imgFront: "kapusonlu.png",
+                imgBack: "kapusonlu-arka.png"
+            }
+        };
+
+        let sepet = JSON.parse(localStorage.getItem("oguz_tech_cart_data")) || [];
+        let aktifUrun = null;
+        let secilenBeden = "";
+        let matrixInterval = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMatrixEffect();
+            renderCart();
+        });
+
+        function initMatrixEffect() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*".split("");
+            const fontSize = window.innerWidth < 768 ? 16 : 14; 
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
+            if (matrixInterval) clearInterval(matrixInterval);
+            matrixInterval = setInterval(() => {
+                ctx.fillStyle = 'rgba(11, 17, 30, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00F0FF';
+                ctx.font = fontSize + 'px Courier New';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }, 33); 
+        }
+
+        function scrollToProducts() {
+            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => { menu.classList.remove('opacity-0'); }, 10);
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.add('opacity-0');
+                setTimeout(() => { menu.classList.add('hidden'); }, 300);
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function toggleCartSidebar() {
+            const sidebar = document.getElementById('cartSidebar');
+            if (sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.remove('translate-x-full');
+            } else {
+                sidebar.classList.add('translate-x-full');
+            }
+        }
+
+        function openQuickView(urunKey) {
+            aktifUrun = urunler[urunKey];
+            secilenBeden = ""; 
+            
+            document.getElementById('modalTitle').innerText = aktifUrun.title;
+            document.getElementById('modalPrice').innerText = aktifUrun.price.toFixed(2) + " TL";
+            document.getElementById('modalDesc').innerText = aktifUrun.desc;
+            document.getElementById('sizeWarning').classList.add('hidden');
+            
+            document.getElementById('modalImg').src = aktifUrun.imgFront;
+            changeModalView('front');
+
+            document.querySelectorAll('#sizeContainer button').forEach(btn => {
+                btn.className = "w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition";
+            });
+
+            const modal = document.getElementById('quickViewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('quickViewModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeModalOnOutside(event) {
+            if (event.target === document.getElementById('quickViewModal')) {
+                closeModal();
+            }
+        }
+
+        function changeModalView(side) {
+            const img = document.getElementById('modalImg');
+            const btnFront = document.getElementById('btnViewFront');
+            const btnBack = document.getElementById('btnViewBack');
+
+            if(side === 'front') {
+                img.src = aktifUrun.imgFront;
+                btnFront.className = "px-3 py-1 border border-[#00F0FF] text-xs font-cyber text-[#00F0FF] bg-[#00F0FF]/10 rounded tracking-wider transition";
+                btnBack.className = "px-3 py-1 border border-slate-700 text-xs font-cyber text-slate-400 rounded tracking-wider transition";
+            } else {
+                img.src = aktifUrun.imgBack;
+                btnFront.className = "px-3 py-1 border border-slate-700 text-xs font-cyber text-slate-400 rounded tracking-wider transition";
+                btnBack.className = "px-3 py-1 border border-[#00F0FF] text-xs font-cyber text-[#00F0FF] bg-[#00F0FF]/10 rounded tracking-wider transition";
+            }
+        }
+
+        function selectSize(element) {
+            element.parentElement.querySelectorAll('button').forEach(btn => {
+                btn.className = "w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition";
+            });
+            element.className = "w-10 h-10 border border-[#00F0FF] text-[#00F0FF] bg-[#00F0FF]/10 rounded flex items-center justify-center font-cyber text-xs transition";
+            
+            secilenBeden = element.innerText;
+            document.getElementById('sizeWarning').classList.add('hidden');
+        }
+
+        function triggerActionNotification(text) {
+            const notif = document.getElementById('actionNotification');
+            document.getElementById('actionNotificationText').innerText = text;
+            notif.classList.remove('translate-x-20', 'opacity-0');
+            notif.classList.add('translate-x-0', 'opacity-100');
+            
+            setTimeout(() => {
+                notif.classList.remove('translate-x-0', 'opacity-100');
+                notif.classList.add('translate-x-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function addItemToCart() {
+            if (secilenBeden === "") {
+                document.getElementById('sizeWarning').classList.remove('hidden');
+                return;
+            }
+
+            const mevcutUrun = sepet.find(item => item.id === aktifUrun.id && item.size === secilenBeden);
+
+            if (mevcutUrun) {
+                mevcutUrun.quantity += 1;
+            } else {
+                sepet.push({
+                    id: aktifUrun.id,
+                    title: aktifUrun.title,
+                    price: aktifUrun.price,
+                    size: secilenBeden,
+                    img: aktifUrun.imgFront,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem("oguz_tech_cart_data", JSON.stringify(sepet));
+
+            secilenBeden = "";
+            document.querySelectorAll('#sizeContainer button').forEach(btn => {
+                btn.className = "w-10 h-10 border border-slate-700 rounded flex items-center justify-center font-cyber text-xs hover:border-[#00F0FF] text-white transition";
+            });
+
+            closeModal();
+            renderCart();
+            toggleCartSidebar(); 
+            triggerActionNotification("ÜRÜN SEPETE EKLENDİ!");
+        }
+
+        function removeCartItem(id, size) {
+            sepet = sepet.filter(item => !(item.id === id && item.size === size));
+            localStorage.setItem("oguz_tech_cart_data", JSON.stringify(sepet));
+            renderCart();
+            triggerActionNotification("ÜRÜN SEPETTEN ÇIKARILDI.");
+        }
+
+        function renderCart() {
+            const listContainer = document.getElementById('cartItemsList');
+            const totalText = document.getElementById('cartTotalText');
+            const badgeDesktop = document.getElementById('cartCountBadge');
+            const badgeMobile = document.getElementById('mobileCartCountBadge');
+            const checkoutBtn = document.getElementById('whatsappCheckoutBtn');
+
+            listContainer.innerHTML = "";
+            
+            let toplamAdet = 0;
+            let toplamFiyat = 0;
+
+            if(sepet.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm font-cyber text-center py-8">Sepetiniz henüz boş.</p>';
+                totalText.innerText = "0.00 TL";
+                badgeDesktop.innerText = "0";
+                badgeMobile.innerText = "0";
+                if(checkoutBtn) checkoutBtn.disabled = true;
+                return;
+            }
+
+            if(checkoutBtn) checkoutBtn.disabled = false;
+
+            sepet.forEach(item => {
+                toplamAdet += item.quantity;
+                const urunSatirFiyati = item.price * item.quantity;
+                toplamFiyat += urunSatirFiyati;
+
+                const itemHtml = `
+                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-3 bg-slate-900/20 p-2 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" width="48" height="48" class="w-12 h-12 object-cover rounded-md border border-slate-700" />
+                            <div>
+                                <h4 class="text-xs font-cyber text-white font-medium">${item.title}</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Beden: <span class="text-[#00F0FF]">${item.size}</span> | Adet: ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex items-center space-x-3">
+                            <span class="text-xs font-cyber text-[#00F0FF] font-bold">${urunSatirFiyati.toFixed(2)} TL</span>
+                            <button onclick="removeCartItem('${item.id}', '${item.size}')" class="text-red-400 hover:text-red-600 transition text-sm p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                `;
+                listContainer.innerHTML += itemHtml;
+            });
+
+            totalText.innerText = toplamFiyat.toFixed(2) + " TL";
+            badgeDesktop.innerText = toplamAdet;
+            badgeMobile.innerText = toplamAdet;
+        }
+
+        function checkoutToWhatsApp() {
+            if (sepet.length === 0) return;
+
+            let temizNumara = KENDI_TELEFONUM.replace(/\D/g, '');
+            
+            let mesaj = `⚡ *OĞUZ TECH - YENİ SİPARİŞ TALEBİ* ⚡\n\n`;
+            let genelToplam = 0;
+
+            sepet.forEach((item, index) => {
+                let urunTutar = item.price * item.quantity;
+                genelToplam += urunTutar;
+                mesaj += `${index + 1}) *${item.title}*\n`;
+                mesaj += `   • Beden: ${item.size}\n`;
+                mesaj += `   • Adet: ${item.quantity}\n`;
+                mesaj += `   • Fiyat: ${urunTutar.toFixed(2)} TL\n`;
+                mesaj += `   • Görsel: ${SITE_URL}/${item.img}\n\n`;
+            });
+
+            mesaj += `=========================\n`;
+            mesaj += `💰 *GENEL TOPLAM:* ${genelToplam.toFixed(2)} TL\n`;
+            mesaj += `=========================\n\n`;
+            mesaj += `Kargo ve teslimat bilgilerimi iletmek için dönüşünüzü bekliyorum.`;
+
+            const whatsappUrl = `https://wa.me/${temizNumara}?text=${encodeURIComponent(mesaj)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function switchTab(tabKey) {
+            document.querySelectorAll('.legal-content').forEach(content => content.classList.add('hidden'));
+            document.querySelectorAll('#legalTabs button').forEach(btn => {
+                btn.className = "px-4 py-2 text-xs sm:text-sm font-cyber tracking-wider border-b-2 border-transparent text-slate-400 transition-all";
+            });
+
+            document.getElementById(`content-${tabKey}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabKey}`).className = "px-4 py-2 text-xs sm:text-sm font-cyber tracking-wider border-b-2 border-b-[#00F0FF] text-[#00F0FF] transition-all";
+        }
+
+        function toggleFaq(button) {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+            
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+
+        function filterProducts() {
+            const searchVal = document.getElementById('cyberSearchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.querySelector('.product-title').innerText.toLowerCase();
+                if (title.includes(searchVal)) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            const noResult = document.getElementById('searchNoResult');
+            if (visibleCount === 0) {
+                noResult.classList.remove('hidden');
+            } else {
+                noResult.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
