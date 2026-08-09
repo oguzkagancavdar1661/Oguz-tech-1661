@@ -49,6 +49,15 @@
     .vehicle-select:focus, .search-input:focus { border-color:var(--cyan); box-shadow:0 0 14px rgba(0,229,255,.12); }
     .vehicle-select option { background:#08101b; }
     .tag { border:1px solid rgba(0,229,255,.2); background:rgba(0,229,255,.06); }
+    .vin-input {
+      width:100%; background:#050910; border:1px solid rgba(0,229,255,.28);
+      color:#fff; border-radius:12px; padding:16px 18px; outline:none;
+      letter-spacing:.12em; font-family:Orbitron,sans-serif; text-transform:uppercase;
+    }
+    .vin-input:focus { border-color:var(--cyan); box-shadow:0 0 20px rgba(0,229,255,.14); }
+    .vin-success { border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.06); }
+    .vin-warning { border-color:rgba(251,191,36,.35); background:rgba(251,191,36,.06); }
+
     .product-card { transition:.25s ease; }
     .product-card:hover { transform:translateY(-4px); border-color:rgba(0,229,255,.45); }
     .toast { transform:translateY(-20px); opacity:0; pointer-events:none; transition:.3s; }
@@ -139,6 +148,36 @@
         </div>
 
         <div class="card rounded-2xl p-6 lg:p-8 glow">
+          <div class="rounded-2xl border border-cyan-300/15 bg-cyan-300/[.03] p-5 lg:p-6 mb-7">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div class="cyber text-sm tracking-widest text-cyan-300"><i class="fa-solid fa-fingerprint mr-2"></i> VIN / ŞASİ NUMARASI</div>
+                <p class="text-xs text-slate-500 mt-2">17 karakterli VIN numaranızı girin. Örnek: WDDXXXXXXXXXXXXXXX</p>
+              </div>
+              <span class="tag rounded-full px-3 py-1 text-[10px] cyber text-cyan-300">ÖN DOĞRULAMA</span>
+            </div>
+            <div class="grid md:grid-cols-[1fr_auto] gap-3 mt-5">
+              <input id="vinInput" class="vin-input" maxlength="17" autocomplete="off" spellcheck="false"
+                     placeholder="VIN / ŞASİ NUMARANIZI GİRİN"
+                     oninput="normalizeVinInput()"
+                     onkeydown="if(event.key==='Enter') findByVin()">
+              <button onclick="findByVin()" class="btn cyber bg-cyan-300 text-black px-7 py-3 rounded-lg font-bold tracking-wider">
+                <i class="fa-solid fa-magnifying-glass mr-2"></i> ARACIMI BUL
+              </button>
+            </div>
+            <div id="vinResult" class="hidden mt-5 rounded-xl border p-4 text-sm"></div>
+            <p class="text-[11px] text-slate-600 mt-4 leading-5">
+              Bu sürümde VIN yalnızca biçim kontrolünden geçirilir; VIN sunucuya gönderilmez veya kaydedilmez.
+              Gerçek Mercedes-Benz araç/parça eşleştirmesi için yetkili veri/API bağlantısı ayrıca kurulacaktır.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3 mb-7">
+            <div class="h-px bg-white/10 flex-1"></div>
+            <span class="text-[10px] cyber text-slate-600 tracking-widest">VEYA MANUEL ARA</span>
+            <div class="h-px bg-white/10 flex-1"></div>
+          </div>
+
           <div class="grid md:grid-cols-4 gap-4">
             <div><label class="text-xs text-slate-500 cyber block mb-2">MARKA</label><select id="brand" class="vehicle-select"><option>Mercedes-Benz</option></select></div>
             <div><label class="text-xs text-slate-500 cyber block mb-2">MODEL</label>
@@ -189,7 +228,7 @@
         <div class="text-center mb-10">
           <div class="text-cyan-300 text-xs cyber tracking-[.3em] mb-3">03 // ÜRÜNLER</div>
           <h2 class="cyber text-3xl font-bold">YEDEK PARÇALAR</h2>
-          <p class="text-slate-500 mt-3 text-sm">Örnek ürün kataloğu. Gerçek stok, fiyat ve parça numaralarını ürün verilerinle güncelle.</p>
+          <p class="text-slate-500 mt-3 text-sm">Demo katalog. Gerçek Mercedes-Benz parça verisi ve OĞUZ TECH stok entegrasyonu tamamlandığında VIN sonucuna göre filtrelenecek.</p>
         </div>
         <div class="max-w-xl mx-auto mb-8">
           <input id="productSearch" class="search-input" placeholder="Ürün, kategori veya parça numarası ara..." oninput="filterProducts()">
@@ -323,28 +362,56 @@
       document.getElementById("products").scrollIntoView({behavior:"smooth"});
     }
 
+    function normalizeVinInput(){
+      const input=document.getElementById("vinInput");
+      input.value=input.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g,"").slice(0,17);
+    }
+
+    function isValidVinFormat(vin){
+      return /^[A-HJ-NPR-Z0-9]{17}$/.test(vin);
+    }
+
+    function findByVin(){
+      const input=document.getElementById("vinInput");
+      const result=document.getElementById("vinResult");
+      const vin=input.value.trim().toUpperCase();
+
+      result.className="mt-5 rounded-xl border p-4 text-sm";
+
+      if(vin.length!==17){
+        result.classList.add("vin-warning");
+        result.innerHTML=`<div class="text-amber-300 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-2"></i>VIN UZUNLUĞU GEÇERSİZ</div>
+          <div class="text-slate-400 mt-2">VIN 17 karakter olmalıdır. Şu anda <strong class="text-white">${vin.length}</strong> karakter girdiniz.</div>`;
+        return;
+      }
+
+      if(!isValidVinFormat(vin)){
+        result.classList.add("vin-warning");
+        result.innerHTML=`<div class="text-amber-300 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-2"></i>VIN BİÇİMİ GEÇERSİZ</div>
+          <div class="text-slate-400 mt-2">VIN içinde I, O veya Q karakterleri kullanılamaz. Lütfen şasi numaranızı kontrol edin.</div>`;
+        return;
+      }
+
+      result.classList.add("vin-success");
+      result.innerHTML=`<div class="text-green-300 font-semibold"><i class="fa-solid fa-circle-check mr-2"></i>VIN BİÇİMİ DOĞRULANDI</div>
+        <div class="text-slate-300 mt-2">VIN: <strong class="text-white tracking-widest">${vin}</strong></div>
+        <div class="text-slate-400 mt-2">Gerçek Mercedes-Benz araç ve parça kataloğu bağlantısı henüz kurulmadı. Yetkili veri erişimi bağlandığında burada model, kasa, motor ve yalnızca uyumlu OĞUZ TECH parçaları gösterilecek.</div>`;
+    }
+
     function findParts(){
       const model=document.getElementById("model").value, chassis=document.getElementById("chassis").value, engine=document.getElementById("engine").value;
       const result=document.getElementById("finderResult");
-      if(!model && !chassis && !engine){ result.classList.remove("hidden"); result.innerHTML="Lütfen en az bir araç bilgisi seçin veya parça numarasıyla arama yapın."; return; }
+      if(!model && !chassis && !engine){
+        result.classList.remove("hidden");
+        result.innerHTML="Lütfen araç bilgisi seçin, VIN/şasi numarasıyla arama yapın veya parça numarasıyla arama yapın.";
+        return;
+      }
       result.classList.remove("hidden");
-      result.innerHTML=`<span class="text-cyan-300">EŞLEŞTİRME:</span> ${model||"Mercedes-Benz"} ${chassis||""} ${engine||""} için katalogdaki ürünler gösteriliyor. <strong class="text-white">Kesin uyumluluk, gerçek parça verileriyle doğrulanmalıdır.</strong>`;
+      result.innerHTML=`<span class="text-cyan-300">MANUEL EŞLEŞTİRME:</span> ${model||"Mercedes-Benz"} ${chassis||""} ${engine||""} için mevcut demo katalog filtreleniyor. <strong class="text-white">Kesin uyumluluk gerçek parça verileriyle doğrulanmalıdır.</strong>`;
       document.getElementById("products").scrollIntoView({behavior:"smooth"});
     }
 
-    function updateEngines(){ /* Gerçek araç/veri tabanı bağlandığında dinamik doldurulabilir. */ }
-
-    function openProduct(id){
-      activeProduct=products.find(p=>p.id===id);
-      document.getElementById("modalCategory").textContent=activeProduct.category.toUpperCase();
-      document.getElementById("modalTitle").textContent=activeProduct.name;
-      document.getElementById("modalPart").textContent="PARÇA NO: "+activeProduct.part;
-      document.getElementById("modalDesc").textContent=activeProduct.desc+" Uyumlu araçlar: "+activeProduct.models;
-      document.getElementById("modalPrice").textContent=money(activeProduct.price);
-      document.getElementById("modalIcon").className="fa-solid "+activeProduct.icon+" text-7xl text-cyan-300/70";
-      document.getElementById("productModal").classList.remove("hidden");
-      document.getElementById("productModal").classList.add("flex");
-    }
+    function updateEngines(){ /* Gerçek Mercedes araç/veri tabanı bağlandığında dinamik doldurulacak. */ }
 
     function closeProduct(){ document.getElementById("productModal").classList.add("hidden"); document.getElementById("productModal").classList.remove("flex"); }
 
